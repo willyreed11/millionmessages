@@ -40,5 +40,5 @@ window.MM_CONFIG = {
   shareText: "One short, positive, non-partisan message to the White House. Takes two minutes, and there's a live count.",
 
   // Public source code. Fill in once the GitHub repository exists.
-  sourceUrl: "",
+  sourceUrl: "https://github.com/willyreed11/millionmessages",
 };
