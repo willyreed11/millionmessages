@@ -17,7 +17,7 @@
   var LS_KEY = "mm_sent_on";
 
   if (msgEl) msgEl.textContent = cfg.message || "";
-  if (openBtn) openBtn.href = cfg.formUrl || "#";
+  if (openBtn) { openBtn.href = cfg.formUrl || "#"; openBtn.addEventListener("click", function () { event("open"); }); }
 
   function fmt(n) { return n === null || n === undefined ? "—" : Number(n).toLocaleString(); }
   function setStatus(text, kind) {
@@ -40,7 +40,23 @@
       .catch(function () { /* leave previous value */ });
   }
   refresh();
-  setInterval(refresh, 30000);
+  setInterval(function () { if (!document.hidden) refresh(); }, 120000);
+  document.addEventListener("visibilitychange", function () { if (!document.hidden) refresh(); });
+
+  // ---- aggregate funnel counters (totals only; nothing about the visitor) ----
+  function event(type) {
+    try {
+      var body = JSON.stringify({ type: type });
+      if (navigator.sendBeacon) {
+        navigator.sendBeacon("/api/event", new Blob([body], { type: "application/json" }));
+      } else {
+        fetch("/api/event", { method: "POST", headers: { "content-type": "application/json" }, body: body, keepalive: true }).catch(function () {});
+      }
+    } catch (e) {}
+  }
+  var pageType = document.body.classList.contains("embed") ? "view_embed"
+               : document.body.classList.contains("about") ? "view_about" : "view";
+  event(pageType);
 
   // ---- copy ----------------------------------------------------------------
   function fallbackCopy(text) {
@@ -54,6 +70,7 @@
     return ok;
   }
   if (copyBtn) copyBtn.addEventListener("click", function () {
+    event("copy");
     var text = cfg.message || "";
     var done = function () {
       copyBtn.textContent = "Copied ✓";
@@ -144,6 +161,7 @@
   var shareStatus = $("share-status");
   function setShareStatus(t) { if (shareStatus) shareStatus.textContent = t || ""; if (shareStatus) shareStatus.className = "status ok"; }
   if (shareBtn) shareBtn.addEventListener("click", function () {
+    event("share");
     var url = "https://millionmessages.us/";
     var text = (cfg.shareText || "") ;
     if (navigator.share) {

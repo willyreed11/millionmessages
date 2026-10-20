@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>About — Million Messages</title>
+<meta name="description" content="How millionmessages.us works, what the count means, what is stored, where Americans stand on each point, and how to embed the counter.">
+<meta property="og:title" content="About Million Messages">
+<meta property="og:description" content="How the count works, what is stored, and where Americans stand on each point in the message.">
+<meta property="og:image" content="https://millionmessages.us/og.png">
+<meta property="og:url" content="https://millionmessages.us/about">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='15' fill='%231f4e9c'/%3E%3Ctext x='16' y='22' font-size='17' text-anchor='middle' fill='white' font-family='Georgia'%3EM%3C/text%3E%3C/svg%3E">
+</head>
+<body class="about">
+<div class="wrap">
+
+  <header class="hero">
+    <p class="brand"><a href="/">millionmessages.us</a></p>
+    <p class="count" id="count" aria-live="polite">—</p>
+    <p class="count-label">people have reported sending the message <small><a href="/">← back to the message</a></small></p>
+  </header>
+
+  <h1>About this site</h1>
+
+  <h2>Why a count?</h2>
+  <p class="fine">One message is one message. A visible, growing number is what persuades the next person that it's worth two minutes of their time. That's all this site does: hold the message, make it easy to send, and keep the count.</p>
+
+  <h2>Questions people ask</h2>
+
+  <h3>The count is self-reported. Doesn't that make it meaningless?</h3>
+  <p class="fine">It makes it an honest estimate rather than an audited figure. Nobody outside the White House can see what arrives through its form, so no site can verify sends; petition sites, "call your representative" tools and pledge campaigns all work the same way. We limit each visitor to one count per day, run a human check on the click, and label the number for exactly what it is. The number is a signal of how many people cared enough to act, and that is what it's for.</p>
+
+  <h3>Who is behind this, and who pays for it?</h3>
+  <p class="fine">William Reed, a retired pediatric hematologist in Oakland, California, as a private citizen. No party, campaign, organization or donor is involved. The costs are a domain name and web hosting, paid personally. The complete source code is public, so you don't have to take any of this on trust.</p>
+
+  <h3>Isn't this partisan?</h3>
+  <p class="fine">The message was written to be something people across party lines can sign, and it says what we want rather than what we're against. Polling suggests that most of its points have majority support in both parties; the figures are below.</p>
+
+  <h3>What do you store about me?</h3>
+  <p class="fine">Nothing that identifies you. The site keeps the count and a handful of running totals (page views and button clicks, as plain numbers) so we can see roughly what share of visitors go on to send the message. There are no cookies, accounts, analytics services or third-party scripts, other than Cloudflare's human check on the "I sent it" button. For abuse prevention, when you click "I sent it" the server keeps a one-way, salted hash of your internet address for 24 hours so the same connection isn't counted twice in a day; the address itself is never stored, the hash is deleted after a day, and the salt changes daily so hashes can't be linked across days. Server access logging is off. The White House form you fill in belongs to the White House; this site never sees it. The running totals are public at <a href="/api/stats">/api/stats</a>.</p>
+
+  <h3>Can I change the message before I send it?</h3>
+  <p class="fine">Please do. A message in your own words carries more weight than a copy. The count is for messages broadly along these lines, not identical ones.</p>
+
+  <h3>Why "Dear Mr. President"?</h3>
+  <p class="fine">Because it's the conventional, respectful form of address for the office, whoever holds it, and the message is meant to be respectful.</p>
+
+  <h3>What happens if the message changes?</h3>
+  <p class="fine">Small wording changes are listed in the history at the bottom of this page, with dates. The count is never reset for a wording change; it includes everyone who sent an earlier version.</p>
+
+  <h3>Does the White House actually read these?</h3>
+  <p class="fine">The form itself says messages are captured and archived under the Presidential Records Act. Whether anyone reads them is not something we can know. What we do know is that a large, visible number of citizens saying the same thing is harder to ignore than one, which is the premise of the count.</p>
+
+  <h2>Where Americans stand on each point</h2>
+  <p class="fine">Pollsters ask their own questions, not ours, so each figure below is the closest recent measurement we could find, with the source. We'd rather show the numbers than claim a single percentage for the message as a whole, which nobody has polled.</p>
+  <ol class="fine polling">
+    <li><strong>Legal immigration.</strong> 73% of Americans say immigration is a good thing for the country (Republicans 50%, independents 73%, Democrats 91%); 75% favor a path to citizenship for immigrants here illegally, 81% for those brought as children. <a href="https://news.gallup.com/poll/712289/americans-support-immigration-down-strong.aspx" rel="noopener">Gallup, June 2026</a>.</li>
+    <li><strong>Ukraine rather than Russia.</strong> 61% sympathize more with Ukraine, 3% with Russia (Democrats 78%, Republicans 52%). <a href="https://yougov.com/en-us/articles/54157-four-years-after-russia-invasion-ukraine-most-americans-side-ukraine-few-think-its-winning-february-20-23-2026-economist-yougov-poll" rel="noopener">Economist/YouGov, February 2026</a>.</li>
+    <li><strong>Corruption in government.</strong> A record 89% say corruption is widespread in government (Democrats 91%, independents 90%, Republicans 83%). <a href="https://news.gallup.com/poll/713933/record-high-say-government-corruption-widespread.aspx" rel="noopener">Gallup, 2026</a>.</li>
+    <li><strong>Other nations' elections.</strong> We could not find recent polling on this question. An older survey found Americans across parties agreed the U.S. has interfered abroad and generally disapproved of it. <a href="https://yougov.com/en-us/articles/21808-americans-dont-election-interference-even-if-us-do" rel="noopener">Economist/YouGov, 2018</a>.</li>
+    <li><strong>Democratic republic, institutions, rule of law.</strong> 66% say democracy is the best form of government; 78% say officials must always follow the law. <a href="https://thefulcrum.us/democracy/americans-committed-to-democracy-confidence-declines" rel="noopener">Kettering–Gallup Democracy for All, 2026</a>.</li>
+    <li><strong>Alliances and a leading role.</strong> 58% want the U.S. to take an active part in world affairs (Republicans 63%, Democrats 60%); 65% prefer a shared leadership role; 68% want the U.S. to maintain or increase its NATO commitment (Democrats 86%, independents 67%, Republicans 55%). <a href="https://globalaffairs.org/sites/default/files/2026-09/2026%20CCS%20Report%20Topline.pdf" rel="noopener">Chicago Council Survey, July 2026</a>; <a href="https://globalaffairs.org/research/public-opinion-survey/strong-bipartisan-support-nato-ahead-2026-summit" rel="noopener">Chicago Council/Ipsos, June 2026</a>.</li>
+    <li><strong>Debt and deficits.</strong> We have not yet found a recent poll that matches this wording and will add one when we do.</li>
+  </ol>
+
+  <h2>Put the counter on your own site</h2>
+  <p class="fine">Paste this one line anywhere on a web page. It shows the live count, the message, and the same three steps, inside a small frame served from this site.</p>
+  <pre class="code" id="embed-code"></pre>
+
+  <h2>Message history</h2>
+  <ul class="fine" id="version-history"></ul>
+
+  <h2>Source code</h2>
+  <p class="fine">Everything that runs this site is public: <a id="source-link" href="#">Source code on GitHub</a>. The server side is about two hundred lines.</p>
+
+  <footer>
+    <p>Run by William Reed, a retired physician in Oakland, California, as a private citizen. Not affiliated with any party, campaign, or organization. No money is raised or spent beyond the domain name and hosting.</p>
+    <p>Vibe-coded with Claude, Anthropic’s AI assistant. The code is public, so you can check it rather than trust either of us.</p>
+    <p>Questions or corrections: <a href="mailto:hello@millionmessages.us">hello@millionmessages.us</a> · <a href="/">Back to the message</a></p>
+  </footer>
+
+</div>
+<script src="/config.js"></script>
+<script src="/app.js"></script>
+</body>
+</html>

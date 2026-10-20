@@ -92,3 +92,11 @@ body.embed .steps li::before { width: 30px; height: 30px; top: 10px; font-size: 
 .share-row { margin: 22px 0 0; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
 .share-row .status { margin: 0; }
 body.embed .share-row { margin: 8px 0 0; justify-content: center; }
+
+/* ---- about page / nav ---- */
+.brand a { color: inherit; text-decoration: none; }
+.brand .nav { font-family: var(--sans); font-size: .9rem; color: var(--muted); }
+.brand .nav a { color: var(--accent); }
+h3 { font-size: 1.05rem; margin: 18px 0 4px; }
+.polling li { margin: 10px 0; }
+body.about .count { font-size: 2.4rem; }

@@ -16,6 +16,8 @@
  *   GET  /api/count              -> { count, updated }
  *   POST /api/sent               -> { count, counted }   (body: { token } from Turnstile, if enabled)
  *   POST /api/admin/set          -> { count }            (Authorization: Bearer ADMIN_SECRET; body: { count })
+ *   POST /api/event              -> { ok }               (body: { type }) aggregate funnel counters, nothing per visitor
+ *   GET  /api/stats              -> { count, views, ... } public totals
  *   GET  /api/health             -> { ok: true }
  *   everything else              -> static assets in ./public
  *
@@ -28,6 +30,7 @@
 const RATE_LIMIT_SECONDS = 24 * 60 * 60;      // one counted click per visitor per day
 const COUNT_CACHE_SECONDS = 5;                // edge cache for GET /api/count
 const MAX_BODY_BYTES = 4096;
+const EVENT_TYPES = new Set(['view', 'view_embed', 'view_about', 'copy', 'open', 'share']);
 
 const JSON_HEADERS = {
   'content-type': 'application/json; charset=utf-8',
@@ -154,6 +157,25 @@ export default {
       return json(await res.json());
     }
 
+    if (path === '/api/event' && request.method === 'POST') {
+      // Aggregate funnel counters. Each call adds 1 to a named total; nothing
+      // about the visitor is stored or derivable from it.
+      const body = await readJson(request);
+      const type = body && typeof body.type === 'string' ? body.type : '';
+      if (!EVENT_TYPES.has(type)) return json({ error: 'bad-request' }, 400);
+      ctx.waitUntil(stub.fetch('https://counter/event', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ type }),
+      }));
+      return json({ ok: true });
+    }
+
+    if (path === '/api/stats' && request.method === 'GET') {
+      const res = await stub.fetch('https://counter/stats');
+      return json(await res.json(), 200, { 'cache-control': 'public, max-age=60' });
+    }
+
     if (path === '/api/admin/set' && request.method === 'POST') {
       const auth = request.headers.get('authorization') || '';
       const token = auth.startsWith('Bearer ') ? auth.slice(7) : '';
@@ -216,6 +238,22 @@ export class Counter {
       const updated = new Date().toISOString();
       await this.state.storage.put({ count, updated });
       return Response.json({ count, counted: true });
+    }
+
+    if (url.pathname === '/event') {
+      const { type } = await request.json();
+      const key = 'ev:' + type;
+      const n = ((await this.state.storage.get(key)) || 0) + 1;
+      await this.state.storage.put(key, n);
+      return Response.json({ ok: true });
+    }
+
+    if (url.pathname === '/stats') {
+      const keys = ['view', 'view_embed', 'view_about', 'copy', 'open', 'share'];
+      const vals = await this.state.storage.get(keys.map((k) => 'ev:' + k));
+      const out = { count: await this.getCount(), updated: await this.getUpdated() };
+      for (const k of keys) out[k] = vals.get('ev:' + k) || 0;
+      return Response.json(out);
     }
 
     if (url.pathname === '/set') {
