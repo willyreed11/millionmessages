@@ -1,0 +1,35 @@
+name = "millionmessages"
+main = "src/worker.js"
+compatibility_date = "2026-01-15"
+
+# Static site lives in ./public and is served by the same Worker.
+[assets]
+directory = "./public"
+binding = "ASSETS"
+html_handling = "auto-trailing-slash"
+not_found_handling = "404-page"
+# All requests pass through the Worker (API routing + security headers on pages).
+run_worker_first = true
+
+# The single counter object.
+[[durable_objects.bindings]]
+name = "COUNTER"
+class_name = "Counter"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["Counter"]
+
+# Custom domain. Cloudflare creates the DNS record automatically on deploy
+# once millionmessages.us is in this Cloudflare account.
+[[routes]]
+pattern = "millionmessages.us"
+custom_domain = true
+
+[[routes]]
+pattern = "www.millionmessages.us"
+custom_domain = true
+
+# Logs are OFF: nothing about visitors is retained.
+[observability]
+enabled = false

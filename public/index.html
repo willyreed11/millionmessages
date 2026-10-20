@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Million Messages — write to the White House</title>
+<meta name="description" content="A simple message to the White House, and a running count of people who say they've sent it. Takes about two minutes.">
+<meta property="og:title" content="Million Messages — write to the White House">
+<meta property="og:description" content="One short, positive, non-partisan message to the White House. Copy it, send it through the official contact form, and add yourself to the live count.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://millionmessages.us/">
+<link rel="stylesheet" href="/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='15' fill='%231f4e9c'/%3E%3Ctext x='16' y='22' font-size='17' text-anchor='middle' fill='white' font-family='Georgia'%3EM%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <p class="brand">millionmessages.us</p>
+    <p class="count" id="count" aria-live="polite">—</p>
+    <p class="count-label">people have reported sending this message to the White House
+      <small>self-reported · one count per person per day · updated live</small></p>
+  </header>
+
+  <h1>One short message. Two minutes. Add your voice to the count.</h1>
+  <p class="lead">Any American can write to the President through the official White House contact form. Below is a short, respectful, non-partisan message that people across party lines can put their name to. It deliberately says what we <em>want</em>, not what we're against — a list of complaints could run for pages; a few shared goals fit in a paragraph. Copy it, change it to your own words if you like, send it, and tell us you did.</p>
+
+  <div class="card">
+    <pre class="message" id="message"></pre>
+  </div>
+
+  <ol class="steps">
+    <li>
+      <p><strong>Copy the message.</strong> Feel free to edit it in your own words first — the count is for messages broadly along these lines, not identical ones.</p>
+      <button class="btn" id="copy" type="button">Copy the message</button>
+    </li>
+    <li>
+      <p><strong>Open the official White House contact form</strong> (opens in a new tab). Paste the message into the <em>Comments</em> box, fill in your name and contact details, and press Submit. The form asks for your mailing address, phone and email — that's the White House's requirement, not ours, and none of it ever comes to this site.</p>
+      <a class="btn secondary" id="open" href="#" target="_blank" rel="noopener noreferrer">Open the White House form ↗</a>
+    </li>
+    <li>
+      <p><strong>Come back and click once.</strong> That adds you to the count above.</p>
+      <div id="sent-wrap">
+        <input class="honeypot" id="website" name="website" type="text" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <div id="turnstile"></div>
+        <button class="btn big" id="sent" type="button">I sent it</button>
+        <p class="status" id="status"></p>
+      </div>
+    </li>
+  </ol>
+
+  <div class="share-row">
+    <button class="btn secondary" id="share" type="button">Share this page</button>
+    <p class="status" id="share-status"></p>
+  </div>
+
+  <h2>Why a count?</h2>
+  <p class="fine">One message is one message. A visible, growing number is what persuades the next person that it's worth two minutes of their time. That's all this site does: hold the message, make it easy to send, and keep the count.</p>
+
+  <h2>What this count is, and isn't</h2>
+  <ul class="fine">
+    <li>It is the number of times someone has clicked "I sent it" on this site, limited to once per person per day.</li>
+    <li>It is <strong>self-reported</strong>. Nobody outside the White House can see what is submitted through its form, so we cannot verify sends, and we don't claim to.</li>
+    <li>It includes everyone who sent a version of the message — edited in their own words or sent before a wording change. The message's history is listed below.</li>
+  </ul>
+
+  <h2>What we store</h2>
+  <ul class="fine">
+    <li><strong>The count.</strong> One number.</li>
+    <li><strong>Nothing about you.</strong> No name, email, address, cookies, accounts, or analytics. The form you fill in belongs to the White House; this site never sees it.</li>
+    <li><strong>For abuse prevention only:</strong> when you click "I sent it", the server keeps a one-way, salted hash of your internet address for 24 hours so the same connection isn't counted twice in a day. The address itself is never stored, the hash is deleted after a day, and the salt changes daily so hashes can't be linked across days. A Cloudflare "human check" runs on the click to keep bots out.</li>
+    <li>Server access logging is turned off. Cloudflare, which hosts the site, carries the traffic like any web host.</li>
+    <li>The complete source code is public, so anyone can check all of the above: <a id="source-link" href="#">Source code on GitHub</a>.</li>
+  </ul>
+
+  <h2>Put this on your own site</h2>
+  <p class="fine">Paste this one line anywhere on a web page. It shows the live count, the message, and the same three steps.</p>
+  <pre class="code" id="embed-code"></pre>
+
+  <h2>Message history</h2>
+  <ul class="fine" id="version-history"></ul>
+
+  <footer>
+    <p>Run by William Reed, a retired physician in Oakland, California, as a private citizen. Not affiliated with any party, campaign, or organization. No money is raised or spent beyond the domain name.</p>
+    <p>Vibe-coded with Claude, Anthropic’s AI assistant. The code is public, so you can check it rather than trust either of us.</p>
+    <p>Questions or corrections: <a href="mailto:hello@millionmessages.us">hello@millionmessages.us</a></p>
+  </footer>
+
+</div>
+<script src="/config.js"></script>
+<script src="/app.js"></script>
+</body>
+</html>

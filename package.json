@@ -1,0 +1,15 @@
+{
+  "name": "millionmessages",
+  "version": "1.0.0",
+  "private": true,
+  "description": "millionmessages.us — a self-reported counter of people who have written to the White House contact form",
+  "license": "MIT",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "secrets": "echo 'Run: wrangler secret put SALT_SECRET / ADMIN_SECRET / TURNSTILE_SECRET'"
+  },
+  "devDependencies": {
+    "wrangler": "^4"
+  }
+}

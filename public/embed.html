@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Million Messages</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body class="embed">
+<div class="wrap">
+  <header class="hero">
+    <p class="count" id="count" aria-live="polite">—</p>
+    <p class="count-label">people have reported sending this message to the White House
+      <small>self-reported · one count per person per day</small></p>
+  </header>
+
+  <div class="card">
+    <pre class="message" id="message"></pre>
+  </div>
+
+  <ol class="steps">
+    <li>
+      <p><strong>Copy the message</strong> (edit it in your own words if you like).</p>
+      <button class="btn" id="copy" type="button">Copy the message</button>
+    </li>
+    <li>
+      <p><strong>Open the White House form</strong>, paste it into Comments, fill in your details, submit.</p>
+      <a class="btn secondary" id="open" href="#" target="_blank" rel="noopener noreferrer">Open the White House form ↗</a>
+    </li>
+    <li>
+      <p><strong>Come back and click once.</strong></p>
+      <div id="sent-wrap">
+        <input class="honeypot" id="website" name="website" type="text" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <div id="turnstile"></div>
+        <button class="btn big" id="sent" type="button">I sent it</button>
+        <p class="status" id="status"></p>
+      </div>
+    </li>
+  </ol>
+  <div class="share-row"><button class="btn secondary" id="share" type="button">Share</button><p class="status" id="share-status"></p></div>
+  <p class="embed-foot"><a href="https://millionmessages.us/" target="_blank" rel="noopener">millionmessages.us</a> · what's stored: the count, nothing about you</p>
+</div>
+<script src="/config.js"></script>
+<script src="/app.js"></script>
+</body>
+</html>
