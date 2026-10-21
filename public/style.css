@@ -100,3 +100,6 @@ body.embed .share-row { margin: 8px 0 0; justify-content: center; }
 h3 { font-size: 1.05rem; margin: 18px 0 4px; }
 .polling li { margin: 10px 0; }
 body.about .count { font-size: 2.4rem; }
+
+.fine.small { font-size: .85rem; margin: 8px 0 0; }
+.status.hint { color: var(--muted); }

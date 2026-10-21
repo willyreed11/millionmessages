@@ -74,7 +74,8 @@
     var text = cfg.message || "";
     var done = function () {
       copyBtn.textContent = "Copied ✓";
-      setStatus("Message copied. Now open the form, paste it into the Comments box, and fill in your details.", "ok");
+      copied = true;
+      if (sentBtn && !alreadyToday && !doneToday) { sentBtn.disabled = false; setStatus("Copied. Now press the button to be counted and open the form.", "ok"); }
       setTimeout(function () { copyBtn.textContent = "Copy the message"; }, 3000);
     };
     if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -82,7 +83,16 @@
     } else if (fallbackCopy(text)) done();
   });
 
-  // ---- "I sent it" -----------------------------------------------------
+  // ---- count & open the form -------------------------------------------
+  var copied = false;
+  var doneToday = false;
+  var formWin = null;
+  function openForm() {
+    var url = cfg.formUrl || "#";
+    if (formWin && !formWin.closed) { try { formWin.opener = null; formWin.location.href = url; event("open"); return; } catch (e) {} }
+    var w = window.open(url, "_blank", "noopener");
+    if (!w) { setStatus("Your browser blocked the new tab. Use the \"Open the form\" link below.", "err"); }
+  }
   var alreadyToday = false;
   try {
     var today = new Date().toISOString().slice(0, 10);
@@ -90,6 +100,7 @@
   } catch (e) {}
 
   function markDone(text) {
+    doneToday = true;
     if (sentBtn) { sentBtn.disabled = true; sentBtn.textContent = "Counted ✓ — thank you"; }
     if (tsEl) tsEl.style.display = "none";
     setStatus(text || "", "ok");
@@ -99,6 +110,7 @@
   if (alreadyToday && sentBtn) {
     sentBtn.disabled = true;
     sentBtn.textContent = "Already counted today ✓";
+    setStatus("You're already counted. Use the link below if you need the form again.", "ok");
     if (tsEl) tsEl.style.display = "none";
   }
 
@@ -126,17 +138,22 @@
         turnstileToken = null; // a token is single-use
         if (res.ok && d.counted) {
           if (countEl) countEl.textContent = fmt(d.count);
-          markDone("You're counted. Thank you.");
+          markDone("You're counted. The White House form is open in a new tab — paste the message into Comments, fill in your details, and submit.");
+          openForm();
         } else if (res.ok && d.reason === "already-counted-today") {
           if (countEl) countEl.textContent = fmt(d.count);
-          markDone("You've already been counted today. Thank you.");
+          markDone("You were already counted today. The form is open in a new tab.");
+          openForm();
         } else if (res.ok && d.reason === "outside-us") {
           if (countEl) countEl.textContent = fmt(d.count);
           sentBtn.disabled = true; sentBtn.textContent = "Thank you";
-          setStatus("Thank you for sending it. The count is for people writing from within the United States, so this click isn't added to it.", "ok");
+          setStatus("Thank you for sending it. The count is for people writing from within the United States, so this press isn't added to it. The form is open in a new tab.", "ok");
+          openForm();
         } else if (res.ok && d.reason === "rejected") {
           setStatus("Not counted.", "err");
+          if (formWin && !formWin.closed) { try { formWin.close(); } catch (e) {} }
         } else {
+          if (formWin && !formWin.closed) { try { formWin.close(); } catch (e) {} }
           sentBtn.disabled = false;
           setStatus("Something went wrong (" + (d.error || res.status) + "). Please try again.", "err");
           if (window.turnstile && widgetId !== null) { try { window.turnstile.reset(widgetId); } catch (e) {} }
@@ -144,6 +161,7 @@
       })
       .catch(function () {
         sentBtn.disabled = false;
+        if (formWin && !formWin.closed) { try { formWin.close(); } catch (e) {} }
         setStatus("Network error. Please try again.", "err");
       });
   }
@@ -166,6 +184,7 @@
             if (pendingSubmit) {
               pendingSubmit = false;
               sentBtn.disabled = false;
+              if (formWin && !formWin.closed) { try { formWin.close(); } catch (e) {} }
               setStatus("The human check couldn't run. A content blocker or private-browsing setting can cause this; please try again, or try another browser.", "err");
             }
           },
@@ -184,9 +203,13 @@
   if (sentBtn) sentBtn.addEventListener("click", function () {
     if (sentBtn.disabled) return;
     sentBtn.disabled = true;
+    // Open the tab now, inside the user's gesture, so phones don't block it;
+    // it is pointed at the form once the count is recorded.
+    try { formWin = window.open("about:blank", "_blank"); } catch (e) { formWin = null; }
     if (scriptState === "off" || turnstileToken) { submitSent(); return; }
     if (scriptState === "failed") {
       sentBtn.disabled = false;
+      if (formWin && !formWin.closed) { try { formWin.close(); } catch (e) {} }
       setStatus("The human check couldn't load. A content blocker can cause this; please try another browser or turn the blocker off for this site.", "err");
       return;
     }
@@ -199,6 +222,7 @@
         if (scriptState === "ready") { clearInterval(t); runCheck(); }
         else if (scriptState === "failed" || waited >= 8000) {
           clearInterval(t); sentBtn.disabled = false;
+          if (formWin && !formWin.closed) { try { formWin.close(); } catch (e) {} }
           setStatus("The human check couldn't load. Please reload the page and try again.", "err");
         }
       }, 250);
@@ -213,6 +237,7 @@
     try { window.turnstile.execute(widgetId); }
     catch (e) {
       pendingSubmit = false; sentBtn.disabled = false;
+      if (formWin && !formWin.closed) { try { formWin.close(); } catch (e) {} }
       setStatus("The human check couldn't run. Please reload the page and try again.", "err");
     }
   }

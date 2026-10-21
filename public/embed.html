@@ -11,7 +11,7 @@
 <div class="wrap">
   <header class="hero">
     <p class="count" id="count" aria-live="polite">—</p>
-    <p class="count-label">people have reported sending this message to the White House
+    <p class="count-label">people have taken this message to the White House contact form
       <small>self-reported · one count per person per day · from within the US</small></p>
   </header>
 
@@ -25,16 +25,13 @@
       <button class="btn" id="copy" type="button">Copy the message</button>
     </li>
     <li>
-      <p><strong>Open the White House form</strong>, paste it into Comments, fill in your details, submit.</p>
-      <a class="btn secondary" id="open" href="#" target="_blank" rel="noopener noreferrer">Open the White House form ↗</a>
-    </li>
-    <li>
-      <p><strong>Come back and click once.</strong></p>
+      <p><strong>Press the button.</strong> It counts you and opens the White House form; paste the message into Comments, fill in your details, submit.</p>
       <div id="sent-wrap">
         <input class="honeypot" id="website" name="website" type="text" tabindex="-1" autocomplete="off" aria-hidden="true">
         <div id="turnstile"></div>
-        <button class="btn big" id="sent" type="button">I sent it</button>
-        <p class="status" id="status"></p>
+        <button class="btn big" id="sent" type="button" disabled>Count me &amp; open the form ↗</button>
+        <p class="status" id="status">Copy the message first.</p>
+        <p class="fine small"><a id="open" href="#" target="_blank" rel="noopener noreferrer">Already counted? Open the form again ↗</a></p>
       </div>
     </li>
   </ol>

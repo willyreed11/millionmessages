@@ -20,7 +20,7 @@
   <header class="hero">
     <p class="brand">millionmessages.us <span class="nav">· <a href="/about">About &amp; FAQ</a></span></p>
     <p class="count" id="count" aria-live="polite">—</p>
-    <p class="count-label">people have reported sending this message to the White House
+    <p class="count-label">people have taken this message to the White House contact form
       <small>self-reported · one count per person per day · from within the US · updated live</small></p>
   </header>
 
@@ -37,16 +37,13 @@
       <button class="btn" id="copy" type="button">Copy the message</button>
     </li>
     <li>
-      <p><strong>Open the official White House contact form</strong> (opens in a new tab). Paste the message into the <em>Comments</em> box, fill in your name and contact details, and press Submit. The form asks for your mailing address, phone and email — that's the White House's requirement, not ours, and none of it ever comes to this site.</p>
-      <a class="btn secondary" id="open" href="#" target="_blank" rel="noopener noreferrer">Open the White House form ↗</a>
-    </li>
-    <li>
-      <p><strong>Come back and click once.</strong> That adds you to the count above. A quick human check runs when you click.</p>
+      <p><strong>Press the button below.</strong> It adds you to the count and opens the official White House contact form. Paste the message into the <em>Comments</em> box, fill in your name and contact details, and press Submit. The form asks for your mailing address, phone and email — that's the White House's requirement, not ours, and none of it ever comes to this site. A quick human check runs when you press the button.</p>
       <div id="sent-wrap">
         <input class="honeypot" id="website" name="website" type="text" tabindex="-1" autocomplete="off" aria-hidden="true">
         <div id="turnstile"></div>
-        <button class="btn big" id="sent" type="button">I sent it</button>
-        <p class="status" id="status"></p>
+        <button class="btn big" id="sent" type="button" disabled>Count me &amp; open the form ↗</button>
+        <p class="status" id="status">Copy the message first, then this button opens the form.</p>
+        <p class="fine small"><a id="open" href="#" target="_blank" rel="noopener noreferrer">Already counted? Open the form again ↗</a></p>
       </div>
     </li>
   </ol>
@@ -58,16 +55,16 @@
 
   <h2>What this count is, and isn't</h2>
   <ul class="fine">
-    <li>It is the number of times someone has clicked "I sent it" on this site, limited to once per person per day, counted only from within the United States (anyone may send the message; clicks from outside the US are thanked but not counted).</li>
-    <li>It is <strong>self-reported</strong>. Nobody outside the White House can see what is submitted through its form, so we cannot verify sends, and we don't claim to.</li>
+    <li>It is the number of people who copied the message and pressed the button that opens the White House form, limited to once per person per day and counted only from within the United States (anyone may send the message; presses from outside the US are thanked but not counted).</li>
+    <li>It is <strong>self-reported</strong>. Nobody outside the White House can see what is submitted through its form, so we cannot verify sends, and we don't claim to. We count at the moment someone heads to the form because on a phone there is no reliable way to come back afterwards; some people will get to the form and not finish, and the number should be read with that in mind.</li>
     <li>It includes everyone who sent a version of the message — edited in their own words or sent before a wording change. <a href="/about">More on how it works, and what people ask →</a></li>
   </ul>
 
   <h2>What we store</h2>
   <ul class="fine">
     <li><strong>The count.</strong> One number.</li>
-    <li><strong>Nothing about you.</strong> No name, email, address, cookies, accounts, or analytics. The form you fill in belongs to the White House; this site never sees it. We keep a few running totals — page views and button clicks, as plain numbers, nothing per visitor — so we can see what share of visitors go on to send.</li>
-    <li><strong>For abuse prevention only:</strong> when you click "I sent it", the server keeps a one-way, salted hash of your internet address for 24 hours so the same connection isn't counted twice in a day. The address itself is never stored, the hash is deleted after a day, and the salt changes daily so hashes can't be linked across days. A Cloudflare "human check" runs on the click to keep bots out, and the click's country of origin (supplied by Cloudflare) is checked, not stored, so that only clicks from within the US count.</li>
+    <li><strong>Nothing about you.</strong> No name, email, address, cookies, accounts, or analytics. The form you fill in belongs to the White House; this site never sees it. We keep a few running totals — page views and button presses, as plain numbers, nothing per visitor — so we can see what share of visitors go on to the form.</li>
+    <li><strong>For abuse prevention only:</strong> when you press the button, the server keeps a one-way, salted hash of your internet address for 24 hours so the same connection isn't counted twice in a day. The address itself is never stored, the hash is deleted after a day, and the salt changes daily so hashes can't be linked across days. A Cloudflare "human check" runs on the press to keep bots out, and the press's country of origin (supplied by Cloudflare) is checked, not stored, so that only clicks from within the US count.</li>
     <li>Server access logging is turned off. The complete source code is public, so anyone can check all of the above: <a id="source-link" href="#">Source code on GitHub</a>.</li>
   </ul>
 
