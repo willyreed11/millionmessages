@@ -102,30 +102,17 @@
     if (tsEl) tsEl.style.display = "none";
   }
 
-  // Turnstile: load the script only if a site key is configured.
+  // Turnstile (human check). The widget is rendered invisibly and only RUN at
+  // the moment the person clicks "I sent it", so a token can never expire
+  // while they are away filling in the White House form. The button is never
+  // silently disabled; if the check can't load, the person is told why.
   var turnstileToken = null;
-  if (cfg.turnstileSiteKey && tsEl && !alreadyToday) {
-    window.mmTurnstileReady = function () {
-      window.turnstile.render(tsEl, {
-        sitekey: cfg.turnstileSiteKey,
-        size: "normal",
-        callback: function (token) { turnstileToken = token; if (sentBtn) sentBtn.disabled = false; },
-        "expired-callback": function () { turnstileToken = null; if (sentBtn) sentBtn.disabled = true; },
-        "error-callback": function () { turnstileToken = null; setStatus("Human check failed to load. Please reload the page.", "err"); },
-      });
-    };
-    if (sentBtn) sentBtn.disabled = true;
-    var s = document.createElement("script");
-    s.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?onload=mmTurnstileReady&render=explicit";
-    s.async = true; s.defer = true;
-    document.head.appendChild(s);
-  } else if (tsEl) {
-    tsEl.style.display = "none";
-  }
+  var widgetId = null;
+  var scriptState = cfg.turnstileSiteKey ? "loading" : "off";
+  var pendingSubmit = false;
 
-  if (sentBtn) sentBtn.addEventListener("click", function () {
-    if (sentBtn.disabled) return;
-    sentBtn.disabled = true;
+  function submitSent() {
+    pendingSubmit = false;
     setStatus("Recording…");
     var body = { token: turnstileToken, website: ($("website") || {}).value || "" };
     fetch("/api/sent", {
@@ -136,25 +123,99 @@
       .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
       .then(function (res) {
         var d = res.d || {};
+        turnstileToken = null; // a token is single-use
         if (res.ok && d.counted) {
           if (countEl) countEl.textContent = fmt(d.count);
           markDone("You're counted. Thank you.");
         } else if (res.ok && d.reason === "already-counted-today") {
           if (countEl) countEl.textContent = fmt(d.count);
           markDone("You've already been counted today. Thank you.");
+        } else if (res.ok && d.reason === "outside-us") {
+          if (countEl) countEl.textContent = fmt(d.count);
+          sentBtn.disabled = true; sentBtn.textContent = "Thank you";
+          setStatus("Thank you for sending it. The count is for people writing from within the United States, so this click isn't added to it.", "ok");
         } else if (res.ok && d.reason === "rejected") {
           setStatus("Not counted.", "err");
         } else {
           sentBtn.disabled = false;
           setStatus("Something went wrong (" + (d.error || res.status) + "). Please try again.", "err");
-          if (window.turnstile && tsEl) { try { window.turnstile.reset(tsEl); } catch (e) {} }
+          if (window.turnstile && widgetId !== null) { try { window.turnstile.reset(widgetId); } catch (e) {} }
         }
       })
       .catch(function () {
         sentBtn.disabled = false;
         setStatus("Network error. Please try again.", "err");
       });
+  }
+
+  if (cfg.turnstileSiteKey && tsEl && !alreadyToday) {
+    window.mmTurnstileReady = function () {
+      scriptState = "ready";
+      try {
+        widgetId = window.turnstile.render(tsEl, {
+          sitekey: cfg.turnstileSiteKey,
+          execution: "execute",            // run only when we call execute()
+          appearance: "interaction-only",  // visible only if a challenge is actually needed
+          callback: function (token) {
+            turnstileToken = token;
+            if (pendingSubmit) submitSent();
+          },
+          "expired-callback": function () { turnstileToken = null; },
+          "error-callback": function () {
+            turnstileToken = null;
+            if (pendingSubmit) {
+              pendingSubmit = false;
+              sentBtn.disabled = false;
+              setStatus("The human check couldn't run. A content blocker or private-browsing setting can cause this; please try again, or try another browser.", "err");
+            }
+          },
+        });
+      } catch (e) { scriptState = "failed"; }
+    };
+    var s = document.createElement("script");
+    s.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?onload=mmTurnstileReady&render=explicit";
+    s.async = true; s.defer = true;
+    s.onerror = function () { scriptState = "failed"; };
+    document.head.appendChild(s);
+  } else if (tsEl) {
+    tsEl.style.display = "none";
+  }
+
+  if (sentBtn) sentBtn.addEventListener("click", function () {
+    if (sentBtn.disabled) return;
+    sentBtn.disabled = true;
+    if (scriptState === "off" || turnstileToken) { submitSent(); return; }
+    if (scriptState === "failed") {
+      sentBtn.disabled = false;
+      setStatus("The human check couldn't load. A content blocker can cause this; please try another browser or turn the blocker off for this site.", "err");
+      return;
+    }
+    if (scriptState === "loading") {
+      // Script still arriving (slow connection). Wait up to 8 s for it.
+      var waited = 0;
+      setStatus("One moment…");
+      var t = setInterval(function () {
+        waited += 250;
+        if (scriptState === "ready") { clearInterval(t); runCheck(); }
+        else if (scriptState === "failed" || waited >= 8000) {
+          clearInterval(t); sentBtn.disabled = false;
+          setStatus("The human check couldn't load. Please reload the page and try again.", "err");
+        }
+      }, 250);
+      return;
+    }
+    runCheck();
   });
+
+  function runCheck() {
+    pendingSubmit = true;
+    setStatus("Checking that you're human…");
+    try { window.turnstile.execute(widgetId); }
+    catch (e) {
+      pendingSubmit = false; sentBtn.disabled = false;
+      setStatus("The human check couldn't run. Please reload the page and try again.", "err");
+    }
+  }
 
   // ---- share ---------------------------------------------------------------
   var shareBtn = $("share");

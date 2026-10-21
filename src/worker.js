@@ -14,7 +14,7 @@
  *
  * Endpoints:
  *   GET  /api/count              -> { count, updated }
- *   POST /api/sent               -> { count, counted }   (body: { token } from Turnstile, if enabled)
+ *   POST /api/sent               -> { count, counted }   (body: { token } from Turnstile, if enabled; counted only from the US)
  *   POST /api/admin/set          -> { count }            (Authorization: Bearer ADMIN_SECRET; body: { count })
  *   POST /api/event              -> { ok }               (body: { type }) aggregate funnel counters, nothing per visitor
  *   GET  /api/stats              -> { count, views, ... } public totals
@@ -84,6 +84,14 @@ async function readJson(request) {
   }
 }
 
+// US states plus DC and territories whose residents can write to the White House.
+const ALLOWED_COUNTRIES = new Set(['US', 'PR', 'GU', 'VI', 'AS', 'MP', 'UM']);
+function countryAllowed(request) {
+  const c = (request.headers.get('cf-ipcountry') || '').toUpperCase();
+  if (!c || c === 'XX' || c === 'T1') return true; // unknown: give the benefit of the doubt (local dev, rare edge cases)
+  return ALLOWED_COUNTRIES.has(c);
+}
+
 function constantTimeEqual(a, b) {
   if (typeof a !== 'string' || typeof b !== 'string' || a.length !== b.length) return false;
   let diff = 0;
@@ -147,6 +155,13 @@ export default {
 
       const check = await verifyTurnstile(body.token, request, env);
       if (!check.ok) return json({ error: check.reason }, 403);
+
+      // The count is for people in the United States. Cloudflare supplies the
+      // request's country code; it is compared and not stored.
+      if (!countryAllowed(request)) {
+        const cur = await stub.fetch('https://counter/count').then((r) => r.json());
+        return json({ count: cur.count, counted: false, reason: 'outside-us' });
+      }
 
       const hash = await visitorHash(request, env);
       const res = await stub.fetch('https://counter/increment', {
